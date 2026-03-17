@@ -1,1 +1,7 @@
-
+# Evitar subir logs e arquivos temporários
+*.log
+*.xml
+*.csv
+*.tmp
+.history/
+secrets.ps1
