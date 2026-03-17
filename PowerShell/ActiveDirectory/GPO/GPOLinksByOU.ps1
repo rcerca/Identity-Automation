@@ -8,10 +8,11 @@ $results = foreach ($ou in $OUs) {
     $links = Get-GPInheritance -Target $ou.DistinguishedName
     foreach ($link in $links) {
         [PSCustomObject]@{
-            OU        = $ou.DistinguishedName
-            GPO       = $link.DisplayName
-            Enabled   = $link.Enabled
-            Enforced  = $link.Enforced
+            OU        = $link.path
+            InheritanceBlocked   = $link.GpoInheritanceBlocked
+            GPOLinks = ($link.GpoLinks  | % { ($_.displayName) }) -join “,”
+            InheritedGpoLinks  =  ( $link.InheritedGpoLinks | % { ($_.displayName) }) -join “,” 
+
         }
     }
 }
