@@ -1,6 +1,6 @@
 Clear
 
-$ID="2500502"
+$ID="AccountName"
 
 $user=Get-ADUser -LDAPFilter "(&(name=$ID))" -Properties PrimaryGroup,SidHistory
 
