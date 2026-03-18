@@ -1,0 +1,11 @@
+[System.Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic') | Out-Null
+$Forests = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the Forest name(s)", "Forest Name(s)")
+ 
+Foreach($Forest in $Forests)
+{
+  $Domains = (Get-ADForest $Forest).domains
+  Get-ADForest $Forest | %{[PSCustomObject]@{'Name'=$_.name;'RootDomain'=$_.RootDomain;'ForestMode'=$_.ForestMode;'Domains'=$($_.Domains -join ';');'DomainNamingMaster'=$_.DomainNamingMaster;'SchemaMaster'=$_.SchemaMaster;'GlobalCatalogs'=$($_.GlobalCatalogs -join ';');'Sites'=$($_.Sites -join ';')} }
+  foreach ($Domain in $Domains)
+   { Get-ADDomain $Domain |%{[PSCustomObject]@{'Name'=$_.name;'Forest'=$_.Forest;'ParentDomain'=$_.ParentDomain;'DomainMode'=$_.DomainMode;'InfrastructureMaster'=$_.InfrastructureMaster;'PDCEmulator'=$_.PDCEmulator;'RIDMaster'=$_.RIDMaster;'ReplicaDirectoryServers'=$($_.ReplicaDirectoryServers -join ';');'ReadOnlyReplicaDirectoryServers'=$($_.ReadOnlyReplicaDirectoryServers -join ';')}}  }
+}
+ 
