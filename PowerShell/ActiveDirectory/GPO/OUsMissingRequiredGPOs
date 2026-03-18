@@ -1,0 +1,29 @@
+Clear
+
+# GPOs that must be linked
+$RequiredGPOs = @("GPO1","GPO2")
+
+# Get all OUs named Workstations
+$WorkstationOUs = Get-ADOrganizationalUnit -Filter { Name -eq "Workstations" } -pr canonicalname | sort canonicalname
+
+$Results = foreach ($OU in $WorkstationOUs) {
+
+    # Get linked GPOs for this OU
+    $Inheritance = Get-GPInheritance -Target $OU.DistinguishedName
+    $LinkedGPOs  = $Inheritance.GpoLinks.DisplayName
+
+    # Determine missing GPOs
+    $Missing = $RequiredGPOs | Where-Object { $_ -notin $LinkedGPOs }
+
+    # Only report OUs missing one or more required GPOs
+    if ($Missing.Count -gt 0) {
+        [PSCustomObject]@{
+            OU              = $OU.canonicalname
+            MissingGPOs     = $Missing -join ", "
+            #LinkedGPOs      = $LinkedGPOs -join ", "
+            MissingCount    = $Missing.Count
+        }
+    }
+}
+
+$Results | Sort-Object OU | Format-Table -AutoSize
